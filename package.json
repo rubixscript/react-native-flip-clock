@@ -1,10 +1,11 @@
 {
-  "name": "@rubixreactnative/react-native-flip-clock",
+  "name": "@rubixscript/react-native-flip-clock",
   "version": "1.0.0",
+  "type": "module",
   "description": "A premium aesthetic flip clock timer component with smooth animations for React Native",
-  "main": "index.js",
-  "module": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "scripts": {
     "build": "rollup -c",
@@ -29,7 +30,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rubixscript/react-native-ui-components.git"
+    "url": "https://github.com/rubixscript/react-native-flip-clock.git"
   },
   "peerDependencies": {
     "expo": ">=48.0.0",
@@ -42,6 +43,7 @@
     "expo-screen-orientation": "~9.0.7"
   },
   "devDependencies": {
+    "@rollup/plugin-babel": "^6.1.0",
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-typescript": "^11.0.0",
@@ -51,10 +53,12 @@
     "@types/react-native": "^0.73.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "babel-preset-react-native": "^4.0.1",
     "eslint": "^8.0.0",
     "jest": "^29.0.0",
     "rollup": "^3.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "tslib": "^2.8.1",
     "typescript": "~5.9.2"
   },
   "files": [
