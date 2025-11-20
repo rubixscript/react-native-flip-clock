@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "Flip Clock Example",
+    "slug": "flip-clock-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rubixscript.flipclockexample"
+    },
+    "android": {
+      "package": "com.rubixscript.flipclockexample"
+    }
+  }
+}

@@ -20,20 +20,18 @@ const config = [
     ],
     plugins: [
       peerDepsExternal(),
+      typescript({
+        tsconfig: './tsconfig.json',
+        declaration: true,
+        declarationDir: './dist',
+        exclude: ['**/*.test.ts', '**/*.test.tsx', 'node_modules/**'],
+      }),
       resolve({
         browser: true,
         preferBuiltins: false,
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       }),
       commonjs(),
-      typescript({
-        tsconfig: './tsconfig.json',
-        declaration: true,
-        declarationDir: './dist',
-        rootDir: './src',
-        exclude: ['**/*.test.ts', '**/*.test.tsx'],
-        include: ['src/**/*'],
-      }),
     ],
     external: [
       'react',
