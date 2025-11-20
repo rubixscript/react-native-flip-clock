@@ -1,23 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import FlipClock from '@rubixscript/react-native-flip-clock';
+import { FlipClock } from '@rubixscript/react-native-flip-clock';
 
-export default function App() {
+export default function HomeScreen() {
   const [time, setTime] = useState(25 * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const intervalRef = useRef(null);
-
-  useEffect(() => {
-    if (isRunning && !isPaused) {
-      intervalRef.current = setInterval(() => {
-        setTime((prev) => (prev > 0 ? prev - 1 : 0));
-      }, 1000);
-    } else {
-      clearInterval(intervalRef.current);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [isRunning, isPaused]);
 
   return (
     <View style={styles.container}>
@@ -43,6 +31,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
