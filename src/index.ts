@@ -11,10 +11,24 @@
 // Export main components
 export { default as FlipClock } from './components/FlipClock';
 export { default as FlipClockModal } from './components/FlipClockModal';
+export { default as FlipDigit } from './components/FlipDigit';
+export { default as ColonSeparator } from './components/ColonSeparator';
+
+// Export utilities
+export { getPhaseColors, getPhaseLabel } from './utils/phaseUtils';
+export { formatTime } from './utils/timeUtils';
+export type { FormattedTime } from './utils/timeUtils';
+export { getThemeColors, getPhaseColorsForTheme } from './utils/themeUtils';
+
+// Export constants
+export { DIMENSIONS, ANIMATION_DURATION } from './constants/dimensions';
+export { PHASE_COLORS, BACKGROUND_GRADIENT_COLORS, CARD_GRADIENT_COLORS, DARK_THEME, LIGHT_THEME } from './constants/colors';
 
 // Export types
 export type {
   TimerPhase,
+  Theme,
+  ThemeColors,
   FlipClockProps,
   FlipClockModalProps,
   FlipDigitProps

@@ -21,6 +21,7 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
   onResume,
   onStop,
   phase,
+  theme = 'dark',
 }) => {
   useEffect(() => {
     const lockLandscape = async () => {
@@ -71,6 +72,7 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
         onStop={onStop}
         onClose={handleClose}
         phase={phase}
+        theme={theme}
       />
     </Modal>
   );
