@@ -1,13 +1,13 @@
 import { Theme, ThemeColors, TimerPhase } from '../types';
-import { DARK_THEME, LIGHT_THEME } from '../constants/colors';
+import { THEMES } from '../constants/colors';
 
 /**
  * Get theme colors based on theme mode
- * @param theme - Theme mode ('dark' or 'light', defaults to 'dark')
+ * @param theme - Theme mode ('dark', 'light', 'purple', 'blue', 'green', 'orange', 'pink', 'glass', 'modern', 'minimal')
  * @returns ThemeColors object for the specified theme
  */
 export const getThemeColors = (theme: Theme = 'dark'): ThemeColors => {
-  return theme === 'light' ? LIGHT_THEME : DARK_THEME;
+  return THEMES[theme] || THEMES.dark;
 };
 
 /**

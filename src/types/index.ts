@@ -11,7 +11,7 @@ export type ClockMode = 'countdown' | 'clock';
 /**
  * Theme types for FlipClock component
  */
-export type Theme = 'dark' | 'light';
+export type Theme = 'dark' | 'light' | 'purple' | 'blue' | 'green' | 'orange' | 'pink' | 'glass' | 'modern' | 'minimal';
 
 /**
  * Theme configuration interface

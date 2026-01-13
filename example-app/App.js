@@ -10,7 +10,7 @@ export default function App() {
   const [isPaused, setIsPaused] = useState(false);
   const [showModal, setShowModal] = useState(true);
   const [selectedPhase, setSelectedPhase] = useState('work');
-  const [darkMode, setDarkMode] = useState(true);
+  const [selectedTheme, setSelectedTheme] = useState('dark');
   const [clockMode, setClockMode] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const intervalRef = useRef(null);
@@ -110,26 +110,26 @@ export default function App() {
   }, [clockMode]);
 
   return (
-    <ScrollView style={[styles.scrollView, !darkMode && styles.scrollViewLight]}>
+    <ScrollView style={[styles.scrollView, selectedTheme === 'light' && styles.scrollViewLight]}>
       <View style={styles.container}>
-        <Text style={[styles.mainTitle, !darkMode && styles.textLight]}>
+        <Text style={[styles.mainTitle, selectedTheme === 'light' && styles.textLight]}>
           Flip Clock Timer
         </Text>
 
         {/* Time Display */}
-        <View style={[styles.timeDisplay, darkMode && styles.timeDisplayDark]}>
-          <Text style={[styles.timeText, !darkMode && styles.textLight]}>
+        <View style={[styles.timeDisplay, selectedTheme !== 'light' && styles.timeDisplayDark]}>
+          <Text style={[styles.timeText, selectedTheme === 'light' && styles.textLight]}>
             {formatTimeDisplay(time)}
           </Text>
         </View>
 
         {/* Timer Controls - only show in countdown mode */}
         {!clockMode && (
-          <View style={[styles.controlsContainer, darkMode && styles.controlsContainerDark]}>
+          <View style={[styles.controlsContainer, selectedTheme !== 'light' && styles.controlsContainerDark]}>
             <View style={styles.buttonRow}>
               {!isRunning ? (
                 <TouchableOpacity
-                  style={[styles.controlButton, { backgroundColor: darkMode ? '#8B5CF6' : '#7C3AED' }]}
+                  style={[styles.controlButton, { backgroundColor: selectedTheme === 'light' ? '#7C3AED' : '#8B5CF6' }]}
                   onPress={handleStart}
                 >
                   <Text style={styles.buttonText}>Start</Text>
@@ -164,21 +164,34 @@ export default function App() {
         )}
 
         {/* Settings */}
-        <View style={[styles.settingsContainer, darkMode && styles.settingsContainerDark]}>
-          <Text style={[styles.sectionTitle, !darkMode && styles.textLight]}>Settings</Text>
+        <View style={[styles.settingsContainer, selectedTheme !== 'light' && styles.settingsContainerDark]}>
+          <Text style={[styles.sectionTitle, selectedTheme === 'light' && styles.textLight]}>Settings</Text>
 
-          <View style={styles.settingRow}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Dark Mode</Text>
-            <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-              trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
-              thumbColor={darkMode ? '#8B5CF6' : '#F3F4F6'}
-            />
+          <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
+            <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight, { marginBottom: 12 }]}>Theme</Text>
+            <View style={[styles.pickerContainer, selectedTheme !== 'light' && styles.pickerContainerDark, { width: '100%' }]}>
+              <Picker
+                selectedValue={selectedTheme}
+                onValueChange={setSelectedTheme}
+                style={[styles.picker, selectedTheme === 'light' && styles.pickerLight]}
+                dropdownIconColor={selectedTheme !== 'light' ? '#FFFFFF' : '#000000'}
+              >
+                <Picker.Item label="Dark" value="dark" />
+                <Picker.Item label="Light" value="light" />
+                <Picker.Item label="Purple" value="purple" />
+                <Picker.Item label="Blue" value="blue" />
+                <Picker.Item label="Green" value="green" />
+                <Picker.Item label="Orange" value="orange" />
+                <Picker.Item label="Pink" value="pink" />
+                <Picker.Item label="Glass" value="glass" />
+                <Picker.Item label="Modern" value="modern" />
+                <Picker.Item label="Minimal" value="minimal" />
+              </Picker>
+            </View>
           </View>
 
           <View style={styles.settingRow}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Show Modal</Text>
+            <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight]}>Show Modal</Text>
             <Switch
               value={showModal}
               onValueChange={setShowModal}
@@ -188,7 +201,7 @@ export default function App() {
           </View>
 
           <View style={styles.settingRow}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Clock Mode</Text>
+            <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight]}>Clock Mode</Text>
             <Switch
               value={clockMode}
               onValueChange={setClockMode}
@@ -198,7 +211,7 @@ export default function App() {
           </View>
 
           <View style={styles.settingRow}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Flip Sound</Text>
+            <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight]}>Flip Sound</Text>
             <Switch
               value={soundEnabled}
               onValueChange={setSoundEnabled}
@@ -209,13 +222,13 @@ export default function App() {
 
           {!clockMode && (
             <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
-              <Text style={[styles.settingLabel, !darkMode && styles.textLight, { marginBottom: 12 }]}>Timer Phase</Text>
-            <View style={[styles.pickerContainer, darkMode && styles.pickerContainerDark, { width: '100%' }]}>
+              <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight, { marginBottom: 12 }]}>Timer Phase</Text>
+            <View style={[styles.pickerContainer, selectedTheme !== 'light' && styles.pickerContainerDark, { width: '100%' }]}>
               <Picker
                 selectedValue={selectedPhase}
                 onValueChange={handlePhaseChange}
-                style={[styles.picker, !darkMode && styles.pickerLight]}
-                dropdownIconColor={darkMode ? '#FFFFFF' : '#000000'}
+                style={[styles.picker, selectedTheme === 'light' && styles.pickerLight]}
+                dropdownIconColor={selectedTheme !== 'light' ? '#FFFFFF' : '#000000'}
               >
                 <Picker.Item label="Work Session (25 min)" value="work" />
                 <Picker.Item label="Short Break (5 min)" value="shortBreak" />
@@ -226,7 +239,7 @@ export default function App() {
           )}
 
           <View style={styles.settingRow}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>
+            <Text style={[styles.settingLabel, selectedTheme === 'light' && styles.textLight]}>
               Status: {clockMode ? 'Clock' : (isRunning ? (isPaused ? 'Paused' : 'Running') : 'Stopped')}
             </Text>
           </View>
@@ -234,7 +247,7 @@ export default function App() {
 
         {/* Modal Button */}
         <TouchableOpacity
-          style={[styles.modalButton, { backgroundColor: darkMode ? '#8B5CF6' : '#7C3AED' }]}
+          style={[styles.modalButton, { backgroundColor: selectedTheme === 'light' ? '#7C3AED' : '#8B5CF6' }]}
           onPress={() => setShowModal(true)}
         >
           <Text style={styles.modalButtonText}>Open Full Screen Flip Clock</Text>
@@ -253,7 +266,7 @@ export default function App() {
           onResume={handleResume}
           onStop={handleStop}
           phase={selectedPhase}
-          theme={darkMode ? 'dark' : 'light'}
+          theme={selectedTheme}
           soundEnabled={soundEnabled}
         />
       </View>
