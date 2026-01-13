@@ -9,7 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FlipDigitProps } from '../types';
 import { DIMENSIONS, ANIMATION_DURATION } from '../constants/dimensions';
 
-const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor, themeColors }) => {
+const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor, themeColors, compact = false }) => {
   const flipAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -35,16 +35,19 @@ const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor
     outputRange: ['90deg', '90deg', '0deg'],
   });
 
+  // Scale factor for compact mode
+  const scale = compact ? 0.65 : 1;
+
   return (
-    <View style={styles.digitWrapper}>
-      <View style={styles.digitContainer}>
+    <View style={[styles.digitWrapper, compact && styles.digitWrapperCompact]}>
+      <View style={[styles.digitContainer, compact && styles.digitContainerCompact]}>
         {/* Static top half - shows NEW digit (revealed after flip) */}
         <View style={styles.topHalf}>
           <LinearGradient
             colors={themeColors.cardGradients.top}
             style={styles.cardGradient}
           >
-            <Text style={[styles.digitText, styles.topText, { color: themeColors.text }]}>{digit}</Text>
+            <Text style={[styles.digitText, styles.topText, { color: themeColors.text }, compact && styles.digitTextCompact]}>{digit}</Text>
           </LinearGradient>
         </View>
 
@@ -54,7 +57,7 @@ const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor
             colors={themeColors.cardGradients.bottom}
             style={styles.cardGradient}
           >
-            <Text style={[styles.digitText, styles.bottomText, { color: themeColors.text }]}>{prevDigit}</Text>
+            <Text style={[styles.digitText, styles.bottomText, { color: themeColors.text }, compact && styles.digitTextCompact]}>{prevDigit}</Text>
           </LinearGradient>
         </View>
 
@@ -74,7 +77,7 @@ const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor
             colors={themeColors.cardGradients.top}
             style={styles.cardGradient}
           >
-            <Text style={[styles.digitText, styles.topText, { color: themeColors.text }]}>{prevDigit}</Text>
+            <Text style={[styles.digitText, styles.topText, { color: themeColors.text }, compact && styles.digitTextCompact]}>{prevDigit}</Text>
           </LinearGradient>
         </Animated.View>
 
@@ -94,7 +97,7 @@ const FlipDigit: React.FC<FlipDigitProps> = memo(({ digit, prevDigit, phaseColor
             colors={themeColors.cardGradients.bottom}
             style={styles.cardGradient}
           >
-            <Text style={[styles.digitText, styles.bottomText, { color: themeColors.text }]}>{digit}</Text>
+            <Text style={[styles.digitText, styles.bottomText, { color: themeColors.text }, compact && styles.digitTextCompact]}>{digit}</Text>
           </LinearGradient>
         </Animated.View>
 
@@ -195,6 +198,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+  },
+  // Compact styles for clock mode
+  digitWrapperCompact: {
+    transform: [{ scale: 0.82 }],
+  },
+  digitContainerCompact: {
+    width: DIMENSIONS.DIGIT_WIDTH * 0.82,
+    height: DIMENSIONS.DIGIT_HEIGHT * 0.82,
+    borderRadius: 8,
+  },
+  digitTextCompact: {
+    fontSize: DIMENSIONS.FONT_SIZE * 0.82,
   },
 });
 

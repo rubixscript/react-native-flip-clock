@@ -111,4 +111,6 @@ export interface FlipDigitProps {
   phaseColor: string;
   /** Theme colors for the component */
   themeColors: ThemeColors;
+  /** Whether to use compact size (for clock mode with 6 digits) */
+  compact?: boolean;
 }

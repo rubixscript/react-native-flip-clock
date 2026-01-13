@@ -9,11 +9,12 @@ import { DIMENSIONS } from '../constants/dimensions';
 
 interface ColonSeparatorProps {
   color: string;
+  compact?: boolean;
 }
 
-const ColonSeparator: React.FC<ColonSeparatorProps> = memo(({ color }) => {
+const ColonSeparator: React.FC<ColonSeparatorProps> = memo(({ color, compact = false }) => {
   return (
-    <View style={styles.colonContainer}>
+    <View style={[styles.colonContainer, compact && styles.colonContainerCompact]}>
       <View style={[styles.colonDot, { backgroundColor: color }]} />
       <View style={[styles.colonDot, { backgroundColor: color }]} />
     </View>
@@ -26,6 +27,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: DIMENSIONS.DIGIT_HEIGHT * 0.2,
     marginHorizontal: 4,
+  },
+  colonContainerCompact: {
+    gap: DIMENSIONS.DIGIT_HEIGHT * 0.2 * 0.65,
+    marginHorizontal: 4 * 0.65,
   },
   colonDot: {
     width: DIMENSIONS.COLON_SIZE,

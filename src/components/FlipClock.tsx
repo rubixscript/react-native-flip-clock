@@ -47,27 +47,47 @@ const FlipClock: React.FC<FlipClockProps> = ({
     }
   }, [mode]);
 
-  const { minutes, seconds, prevMinutes, prevSeconds } = useMemo(() => {
+  const { hours, minutes, seconds, prevHours, prevMinutes, prevSeconds } = useMemo(() => {
     if (mode === 'clock') {
-      // Display current time for clock mode
-      const hours = currentTime.getHours();
-      const mins = currentTime.getMinutes();
-      const secs = currentTime.getSeconds();
+      // Display current time for clock mode (HH:MM:SS)
+      const now = currentTime;
+      const hrs = now.getHours();
+      const mins = now.getMinutes();
+      const secs = now.getSeconds();
 
-      // Format as HH:MM:SS
-      const timeStr = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      const prevTimeStr = `${prevTimeRef.current ? new Date(prevTimeRef.current).getHours() : hours}:${prevTimeRef.current ? new Date(prevTimeRef.current).getMinutes() : mins}:${prevTimeRef.current ? new Date(prevTimeRef.current).getSeconds() : secs}`;
+      // Get previous time for flip animation
+      const prevTime = prevTimeRef.current ? new Date(prevTimeRef.current) : now;
+      const prevHrs = prevTime.getHours();
+      const prevMins = prevTime.getMinutes();
+      const prevSecs = prevTime.getSeconds();
 
       // Split into digits for flip animation
+      const hrsStr = hrs.toString().padStart(2, '0');
+      const minsStr = mins.toString().padStart(2, '0');
+      const secsStr = secs.toString().padStart(2, '0');
+      const prevHrsStr = prevHrs.toString().padStart(2, '0');
+      const prevMinsStr = prevMins.toString().padStart(2, '0');
+      const prevSecsStr = prevSecs.toString().padStart(2, '0');
+
       return {
-        minutes: [timeStr[0], timeStr[1]],
-        seconds: [timeStr[3], timeStr[4]],
-        prevMinutes: [prevTimeStr[0], prevTimeStr[1]],
-        prevSeconds: [prevTimeStr[3], prevTimeStr[4]],
+        hours: [hrsStr[0], hrsStr[1]],
+        minutes: [minsStr[0], minsStr[1]],
+        seconds: [secsStr[0], secsStr[1]],
+        prevHours: [prevHrsStr[0], prevHrsStr[1]],
+        prevMinutes: [prevMinsStr[0], prevMinsStr[1]],
+        prevSeconds: [prevSecsStr[0], prevSecsStr[1]],
       };
     } else {
-      // Countdown mode
-      return formatTime(time, prevTimeRef.current);
+      // Countdown mode (MM:SS) - use formatTime and convert to arrays
+      const formatted = formatTime(time, prevTimeRef.current);
+      return {
+        hours: null,
+        minutes: [formatted.minutes[0], formatted.minutes[1]],
+        seconds: [formatted.seconds[0], formatted.seconds[1]],
+        prevHours: null,
+        prevMinutes: [formatted.prevMinutes[0], formatted.prevMinutes[1]],
+        prevSeconds: [formatted.prevSeconds[0], formatted.prevSeconds[1]],
+      };
     }
   }, [time, currentTime, mode]);
 
@@ -118,23 +138,48 @@ const FlipClock: React.FC<FlipClockProps> = ({
 
       {/* Flip clock display - always horizontal */}
       <View style={styles.clockWrapper}>
-        <View style={styles.clockContainer}>
+        <View style={[styles.clockContainer, mode === 'clock' && styles.clockContainerCompact]}>
+          {/* Hours - only show in clock mode */}
+          {mode === 'clock' && (
+            <>
+              <FlipDigit
+                digit={hours[0]}
+                prevDigit={prevHours[0]}
+                phaseColor={phaseColors.primary}
+                themeColors={themeColors}
+                compact={true}
+              />
+              <FlipDigit
+                digit={hours[1]}
+                prevDigit={prevHours[1]}
+                phaseColor={phaseColors.primary}
+                themeColors={themeColors}
+                compact={true}
+              />
+
+              {/* Colon separator */}
+              <ColonSeparator color={phaseColors.primary} compact={true} />
+            </>
+          )}
+
           {/* Minutes */}
           <FlipDigit
             digit={minutes[0]}
             prevDigit={prevMinutes[0]}
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
+            compact={mode === 'clock'}
           />
           <FlipDigit
             digit={minutes[1]}
             prevDigit={prevMinutes[1]}
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
+            compact={mode === 'clock'}
           />
 
           {/* Colon separator */}
-          <ColonSeparator color={phaseColors.primary} />
+          <ColonSeparator color={phaseColors.primary} compact={mode === 'clock'} />
 
           {/* Seconds */}
           <FlipDigit
@@ -142,12 +187,14 @@ const FlipClock: React.FC<FlipClockProps> = ({
             prevDigit={prevSeconds[0]}
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
+            compact={mode === 'clock'}
           />
           <FlipDigit
             digit={seconds[1]}
             prevDigit={prevSeconds[1]}
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
+            compact={mode === 'clock'}
           />
         </View>
       </View>
@@ -237,6 +284,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: DIMENSIONS.GAP,
+  },
+  clockContainerCompact: {
+    gap: 2,
   },
   controlsContainer: {
     position: 'absolute',
