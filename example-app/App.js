@@ -11,6 +11,7 @@ export default function App() {
   const [showModal, setShowModal] = useState(true);
   const [selectedPhase, setSelectedPhase] = useState('work');
   const [darkMode, setDarkMode] = useState(true);
+  const [clockMode, setClockMode] = useState(false);
   const intervalRef = useRef(null);
 
   // Countdown timer logic
@@ -86,10 +87,26 @@ export default function App() {
   };
 
   const formatTimeDisplay = (seconds) => {
+    if (clockMode) {
+      const now = new Date();
+      const hours = now.getHours();
+      const mins = now.getMinutes();
+      const secs = now.getSeconds();
+      return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Update time display every second in clock mode
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (clockMode) {
+      const interval = setInterval(() => setTick(t => t + 1), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [clockMode]);
 
   return (
     <ScrollView style={[styles.scrollView, !darkMode && styles.scrollViewLight]}>
@@ -105,43 +122,45 @@ export default function App() {
           </Text>
         </View>
 
-        {/* Timer Controls */}
-        <View style={[styles.controlsContainer, darkMode && styles.controlsContainerDark]}>
-          <View style={styles.buttonRow}>
-            {!isRunning ? (
-              <TouchableOpacity
-                style={[styles.controlButton, { backgroundColor: darkMode ? '#8B5CF6' : '#7C3AED' }]}
-                onPress={handleStart}
-              >
-                <Text style={styles.buttonText}>Start</Text>
-              </TouchableOpacity>
-            ) : (
-              <>
-                {!isPaused ? (
-                  <TouchableOpacity
-                    style={[styles.controlButton, { backgroundColor: '#F59E0B' }]}
-                    onPress={handlePause}
-                  >
-                    <Text style={styles.buttonText}>Pause</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={[styles.controlButton, { backgroundColor: '#10B981' }]}
-                    onPress={handleResume}
-                  >
-                    <Text style={styles.buttonText}>Resume</Text>
-                  </TouchableOpacity>
-                )}
+        {/* Timer Controls - only show in countdown mode */}
+        {!clockMode && (
+          <View style={[styles.controlsContainer, darkMode && styles.controlsContainerDark]}>
+            <View style={styles.buttonRow}>
+              {!isRunning ? (
                 <TouchableOpacity
-                  style={[styles.controlButton, { backgroundColor: '#EF4444' }]}
-                  onPress={handleStop}
+                  style={[styles.controlButton, { backgroundColor: darkMode ? '#8B5CF6' : '#7C3AED' }]}
+                  onPress={handleStart}
                 >
-                  <Text style={styles.buttonText}>Stop</Text>
+                  <Text style={styles.buttonText}>Start</Text>
                 </TouchableOpacity>
-              </>
-            )}
+              ) : (
+                <>
+                  {!isPaused ? (
+                    <TouchableOpacity
+                      style={[styles.controlButton, { backgroundColor: '#F59E0B' }]}
+                      onPress={handlePause}
+                    >
+                      <Text style={styles.buttonText}>Pause</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.controlButton, { backgroundColor: '#10B981' }]}
+                      onPress={handleResume}
+                    >
+                      <Text style={styles.buttonText}>Resume</Text>
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity
+                    style={[styles.controlButton, { backgroundColor: '#EF4444' }]}
+                    onPress={handleStop}
+                  >
+                    <Text style={styles.buttonText}>Stop</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Settings */}
         <View style={[styles.settingsContainer, darkMode && styles.settingsContainerDark]}>
@@ -167,8 +186,19 @@ export default function App() {
             />
           </View>
 
-          <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
-            <Text style={[styles.settingLabel, !darkMode && styles.textLight, { marginBottom: 12 }]}>Timer Phase</Text>
+          <View style={styles.settingRow}>
+            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Clock Mode</Text>
+            <Switch
+              value={clockMode}
+              onValueChange={setClockMode}
+              trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
+              thumbColor={clockMode ? '#8B5CF6' : '#F3F4F6'}
+            />
+          </View>
+
+          {!clockMode && (
+            <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
+              <Text style={[styles.settingLabel, !darkMode && styles.textLight, { marginBottom: 12 }]}>Timer Phase</Text>
             <View style={[styles.pickerContainer, darkMode && styles.pickerContainerDark, { width: '100%' }]}>
               <Picker
                 selectedValue={selectedPhase}
@@ -182,10 +212,11 @@ export default function App() {
               </Picker>
             </View>
           </View>
+          )}
 
           <View style={styles.settingRow}>
             <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>
-              Status: {isRunning ? (isPaused ? 'Paused' : 'Running') : 'Stopped'}
+              Status: {clockMode ? 'Clock' : (isRunning ? (isPaused ? 'Paused' : 'Running') : 'Stopped')}
             </Text>
           </View>
         </View>
@@ -202,6 +233,7 @@ export default function App() {
         <FlipClockModal
           visible={showModal}
           onClose={() => setShowModal(false)}
+          mode={clockMode ? 'clock' : 'countdown'}
           time={time}
           isRunning={isRunning}
           isPaused={isPaused}

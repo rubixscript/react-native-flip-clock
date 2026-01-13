@@ -4,6 +4,11 @@
 export type TimerPhase = 'work' | 'break' | 'longBreak';
 
 /**
+ * Clock mode types - countdown timer or regular clock
+ */
+export type ClockMode = 'countdown' | 'clock';
+
+/**
  * Theme types for FlipClock component
  */
 export type Theme = 'dark' | 'light';
@@ -40,24 +45,26 @@ export interface ThemeColors {
  * Props for FlipClock component
  */
 export interface FlipClockProps {
-  /** Current time in seconds */
-  time: number;
-  /** Whether the timer is currently running */
-  isRunning: boolean;
-  /** Whether the timer is paused */
-  isPaused: boolean;
-  /** Callback when timer starts */
-  onStart: () => void;
-  /** Callback when timer is paused */
-  onPause: () => void;
-  /** Callback when timer resumes from pause */
-  onResume: () => void;
-  /** Callback when timer stops */
-  onStop: () => void;
+  /** Clock mode - countdown timer or regular clock (default: 'countdown') */
+  mode?: ClockMode;
+  /** Current time in seconds (only for countdown mode) */
+  time?: number;
+  /** Whether the timer is currently running (only for countdown mode) */
+  isRunning?: boolean;
+  /** Whether the timer is paused (only for countdown mode) */
+  isPaused?: boolean;
+  /** Callback when timer starts (only for countdown mode) */
+  onStart?: () => void;
+  /** Callback when timer is paused (only for countdown mode) */
+  onPause?: () => void;
+  /** Callback when timer resumes from pause (only for countdown mode) */
+  onResume?: () => void;
+  /** Callback when timer stops (only for countdown mode) */
+  onStop?: () => void;
   /** Callback when component closes */
   onClose: () => void;
-  /** Current timer phase */
-  phase: TimerPhase;
+  /** Current timer phase (only for countdown mode) */
+  phase?: TimerPhase;
   /** Theme mode (default: 'dark') */
   theme?: Theme;
 }
@@ -70,22 +77,24 @@ export interface FlipClockModalProps {
   visible: boolean;
   /** Callback when modal closes */
   onClose: () => void;
-  /** Current time in seconds */
-  time: number;
-  /** Whether the timer is currently running */
-  isRunning: boolean;
-  /** Whether the timer is paused */
-  isPaused: boolean;
-  /** Callback when timer starts */
-  onStart: () => void;
-  /** Callback when timer is paused */
-  onPause: () => void;
-  /** Callback when timer resumes from pause */
-  onResume: () => void;
-  /** Callback when timer stops */
-  onStop: () => void;
-  /** Current timer phase */
-  phase: TimerPhase;
+  /** Clock mode - countdown timer or regular clock (default: 'countdown') */
+  mode?: ClockMode;
+  /** Current time in seconds (only for countdown mode) */
+  time?: number;
+  /** Whether the timer is currently running (only for countdown mode) */
+  isRunning?: boolean;
+  /** Whether the timer is paused (only for countdown mode) */
+  isPaused?: boolean;
+  /** Callback when timer starts (only for countdown mode) */
+  onStart?: () => void;
+  /** Callback when timer is paused (only for countdown mode) */
+  onPause?: () => void;
+  /** Callback when timer resumes from pause (only for countdown mode) */
+  onResume?: () => void;
+  /** Callback when timer stops (only for countdown mode) */
+  onStop?: () => void;
+  /** Current timer phase (only for countdown mode) */
+  phase?: TimerPhase;
   /** Theme mode (default: 'dark') */
   theme?: Theme;
 }

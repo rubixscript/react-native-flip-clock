@@ -4,7 +4,7 @@
  * Always displays horizontally with elegant styling
  */
 
-import React, { memo, useMemo, useRef, useEffect } from 'react';
+import React, { memo, useMemo, useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -22,38 +22,78 @@ import FlipDigit from './FlipDigit';
 import ColonSeparator from './ColonSeparator';
 
 const FlipClock: React.FC<FlipClockProps> = ({
-  time,
-  isRunning,
-  isPaused,
+  mode = 'countdown',
+  time = 0,
+  isRunning = false,
+  isPaused = false,
   onStart,
   onPause,
   onResume,
   onStop,
   onClose,
-  phase,
+  phase = 'work',
   theme = 'dark',
 }) => {
   const prevTimeRef = useRef(time);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update current time every second when in clock mode
+  useEffect(() => {
+    if (mode === 'clock') {
+      const interval = setInterval(() => {
+        setCurrentTime(new Date());
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [mode]);
 
   const { minutes, seconds, prevMinutes, prevSeconds } = useMemo(() => {
-    return formatTime(time, prevTimeRef.current);
-  }, [time]);
+    if (mode === 'clock') {
+      // Display current time for clock mode
+      const hours = currentTime.getHours();
+      const mins = currentTime.getMinutes();
+      const secs = currentTime.getSeconds();
+
+      // Format as HH:MM:SS
+      const timeStr = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      const prevTimeStr = `${prevTimeRef.current ? new Date(prevTimeRef.current).getHours() : hours}:${prevTimeRef.current ? new Date(prevTimeRef.current).getMinutes() : mins}:${prevTimeRef.current ? new Date(prevTimeRef.current).getSeconds() : secs}`;
+
+      // Split into digits for flip animation
+      return {
+        minutes: [timeStr[0], timeStr[1]],
+        seconds: [timeStr[3], timeStr[4]],
+        prevMinutes: [prevTimeStr[0], prevTimeStr[1]],
+        prevSeconds: [prevTimeStr[3], prevTimeStr[4]],
+      };
+    } else {
+      // Countdown mode
+      return formatTime(time, prevTimeRef.current);
+    }
+  }, [time, currentTime, mode]);
 
   useEffect(() => {
-    prevTimeRef.current = time;
-  }, [time]);
+    if (mode === 'clock') {
+      prevTimeRef.current = currentTime.getTime();
+    } else {
+      prevTimeRef.current = time;
+    }
+  }, [time, currentTime, mode]);
 
   const themeColors = useMemo(() => {
     return getThemeColors(theme);
   }, [theme]);
 
   const phaseColors = useMemo(() => {
+    if (mode === 'clock') {
+      // Use work colors as default for clock mode
+      return getPhaseColorsForTheme('work', theme);
+    }
     return getPhaseColorsForTheme(phase, theme);
-  }, [phase, theme]);
+  }, [phase, theme, mode]);
 
   const phaseLabel = useMemo(() => {
-    return getPhaseLabel(phase);
-  }, [phase]);
+    return mode === 'clock' ? 'CLOCK' : getPhaseLabel(phase);
+  }, [phase, mode]);
 
   return (
     <View style={styles.container}>
@@ -112,44 +152,46 @@ const FlipClock: React.FC<FlipClockProps> = ({
         </View>
       </View>
 
-      {/* Control buttons */}
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }]}
-          onPress={onStop}
-        >
-          <MaterialCommunityIcons name="refresh" size={22} color={themeColors.controlButtonText} />
-        </TouchableOpacity>
+      {/* Control buttons - only show in countdown mode */}
+      {mode === 'countdown' && (
+        <View style={styles.controlsContainer}>
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }]}
+            onPress={onStop}
+          >
+            <MaterialCommunityIcons name="refresh" size={22} color={themeColors.controlButtonText} />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.playPauseButton,
-            { backgroundColor: phaseColors.primary }
-          ]}
-          onPress={() => {
-            if (!isRunning) {
-              onStart();
-            } else if (isPaused) {
-              onResume();
-            } else {
-              onPause();
-            }
-          }}
-        >
-          <MaterialCommunityIcons
-            name={!isRunning || isPaused ? 'play' : 'pause'}
-            size={28}
-            color="#FFFFFF"
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.playPauseButton,
+              { backgroundColor: phaseColors.primary }
+            ]}
+            onPress={() => {
+              if (!isRunning) {
+                onStart?.();
+              } else if (isPaused) {
+                onResume?.();
+              } else {
+                onPause?.();
+              }
+            }}
+          >
+            <MaterialCommunityIcons
+              name={!isRunning || isPaused ? 'play' : 'pause'}
+              size={28}
+              color="#FFFFFF"
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.controlButton, { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }]}
-          onPress={onStop}
-        >
-          <MaterialCommunityIcons name="skip-next" size={22} color={themeColors.controlButtonText} />
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }]}
+            onPress={onStop}
+          >
+            <MaterialCommunityIcons name="skip-next" size={22} color={themeColors.controlButtonText} />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

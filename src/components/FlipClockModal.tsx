@@ -13,14 +13,15 @@ import { FlipClockModalProps } from '../types';
 const FlipClockModal: React.FC<FlipClockModalProps> = ({
   visible,
   onClose,
-  time,
-  isRunning,
-  isPaused,
+  mode = 'countdown',
+  time = 0,
+  isRunning = false,
+  isPaused = false,
   onStart,
   onPause,
   onResume,
   onStop,
-  phase,
+  phase = 'work',
   theme = 'dark',
 }) => {
   useEffect(() => {
@@ -63,6 +64,7 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
     >
       <StatusBar hidden />
       <FlipClock
+        mode={mode}
         time={time}
         isRunning={isRunning}
         isPaused={isPaused}
