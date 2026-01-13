@@ -67,6 +67,8 @@ export interface FlipClockProps {
   phase?: TimerPhase;
   /** Theme mode (default: 'dark') */
   theme?: Theme;
+  /** Whether to enable flip sound (default: false) */
+  soundEnabled?: boolean;
 }
 
 /**
@@ -97,6 +99,8 @@ export interface FlipClockModalProps {
   phase?: TimerPhase;
   /** Theme mode (default: 'dark') */
   theme?: Theme;
+  /** Whether to enable flip sound (default: false) */
+  soundEnabled?: boolean;
 }
 
 /**
@@ -113,4 +117,6 @@ export interface FlipDigitProps {
   themeColors: ThemeColors;
   /** Whether to use compact size (for clock mode with 6 digits) */
   compact?: boolean;
+  /** Whether to enable flip sound */
+  soundEnabled?: boolean;
 }

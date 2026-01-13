@@ -12,6 +12,7 @@ export default function App() {
   const [selectedPhase, setSelectedPhase] = useState('work');
   const [darkMode, setDarkMode] = useState(true);
   const [clockMode, setClockMode] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const intervalRef = useRef(null);
 
   // Countdown timer logic
@@ -196,6 +197,16 @@ export default function App() {
             />
           </View>
 
+          <View style={styles.settingRow}>
+            <Text style={[styles.settingLabel, !darkMode && styles.textLight]}>Flip Sound</Text>
+            <Switch
+              value={soundEnabled}
+              onValueChange={setSoundEnabled}
+              trackColor={{ false: '#D1D5DB', true: '#8B5CF6' }}
+              thumbColor={soundEnabled ? '#8B5CF6' : '#F3F4F6'}
+            />
+          </View>
+
           {!clockMode && (
             <View style={[styles.settingRow, { flexDirection: 'column', alignItems: 'flex-start', paddingVertical: 16 }]}>
               <Text style={[styles.settingLabel, !darkMode && styles.textLight, { marginBottom: 12 }]}>Timer Phase</Text>
@@ -243,6 +254,7 @@ export default function App() {
           onStop={handleStop}
           phase={selectedPhase}
           theme={darkMode ? 'dark' : 'light'}
+          soundEnabled={soundEnabled}
         />
       </View>
     </ScrollView>

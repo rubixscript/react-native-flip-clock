@@ -33,6 +33,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
   onClose,
   phase = 'work',
   theme = 'dark',
+  soundEnabled = false,
 }) => {
   const prevTimeRef = useRef(time);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -148,6 +149,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
                 phaseColor={phaseColors.primary}
                 themeColors={themeColors}
                 compact={true}
+                soundEnabled={soundEnabled}
               />
               <FlipDigit
                 digit={hours[1]}
@@ -155,6 +157,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
                 phaseColor={phaseColors.primary}
                 themeColors={themeColors}
                 compact={true}
+                soundEnabled={soundEnabled}
               />
 
               {/* Colon separator */}
@@ -169,6 +172,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
             compact={mode === 'clock'}
+            soundEnabled={soundEnabled}
           />
           <FlipDigit
             digit={minutes[1]}
@@ -176,6 +180,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
             compact={mode === 'clock'}
+            soundEnabled={soundEnabled}
           />
 
           {/* Colon separator */}
@@ -188,6 +193,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
             compact={mode === 'clock'}
+            soundEnabled={soundEnabled}
           />
           <FlipDigit
             digit={seconds[1]}
@@ -195,6 +201,7 @@ const FlipClock: React.FC<FlipClockProps> = ({
             phaseColor={phaseColors.primary}
             themeColors={themeColors}
             compact={mode === 'clock'}
+            soundEnabled={soundEnabled}
           />
         </View>
       </View>

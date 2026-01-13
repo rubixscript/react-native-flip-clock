@@ -23,6 +23,7 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
   onStop,
   phase = 'work',
   theme = 'dark',
+  soundEnabled = false,
 }) => {
   useEffect(() => {
     const lockLandscape = async () => {
@@ -75,6 +76,7 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
         onClose={handleClose}
         phase={phase}
         theme={theme}
+        soundEnabled={soundEnabled}
       />
     </Modal>
   );
