@@ -167,11 +167,159 @@ Includes all FlipClock props plus:
 | `visible` | `boolean` | Whether the modal is visible |
 | `onClose` | `() => void` | Callback when modal closes |
 
+### FlipDigit
+
+Individual flip digit component for custom implementations.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `digit` | `string` | Current digit value (0-9) |
+| `prevDigit` | `string` | Previous digit value for animation |
+| `phaseColor` | `string` | Color for the current phase |
+| `themeColors` | `ThemeColors` | Theme color object |
+| `size` | `number` | Optional custom size |
+
+### ColonSeparator
+
+Time separator component (:) for clock displays.
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `color` | `string` | Color of the separator |
+| `size` | `number` | Optional custom size |
+
 ## Timer Phases
 
 - `'work'` - Focus/Focus time (red theme)
 - `'break'` - Short break (cyan theme)
 - `'longBreak'` - Long break (blue theme)
+
+## Utility Functions
+
+### `formatTime`
+
+Format seconds into hours, minutes, and seconds.
+
+```tsx
+import { formatTime, type FormattedTime } from '@rubixscript/react-native-flip-clock';
+
+const formatted: FormattedTime = formatTime(3665);
+// Returns: { hours: 1, minutes: 1, seconds: 5, displayText: "01:01:05" }
+```
+
+### `getPhaseColors`
+
+Get colors for a specific timer phase.
+
+```tsx
+import { getPhaseColors } from '@rubixscript/react-native-flip-clock';
+
+const colors = getPhaseColors('work');
+// Returns: { primary: '#FF6B6B', secondary: '#FF8E8E', ... }
+```
+
+### `getPhaseLabel`
+
+Get a human-readable label for a phase.
+
+```tsx
+import { getPhaseLabel } from '@rubixscript/react-native-flip-clock';
+
+const label = getPhaseLabel('work'); // Returns: "Focus"
+const label2 = getPhaseLabel('break'); // Returns: "Short Break"
+const label3 = getPhaseLabel('longBreak'); // Returns: "Long Break"
+```
+
+### `getThemeColors`
+
+Get theme colors for light or dark mode.
+
+```tsx
+import { getThemeColors } from '@rubixscript/react-native-flip-clock';
+
+const darkColors = getThemeColors('dark');
+const lightColors = getThemeColors('light');
+```
+
+### `getPhaseColorsForTheme`
+
+Get phase colors combined with theme colors.
+
+```tsx
+import { getPhaseColorsForTheme } from '@rubixscript/react-native-flip-clock';
+
+const workColors = getPhaseColorsForTheme('work', 'dark');
+```
+
+## Constants
+
+### Dimension Constants
+
+```tsx
+import { DIMENSIONS } from '@rubixscript/react-native-flip-clock';
+
+DIMENSIONS.cardWidth;      // Card width
+DIMENSIONS.cardHeight;     // Card height
+DIMENSIONS.cardBorderRadius; // Border radius
+// ... and more
+```
+
+### Animation Constants
+
+```tsx
+import { ANIMATION_DURATION } from '@rubixscript/react-native-flip-clock';
+
+ANIMATION_DURATION.flip; // Flip animation duration in ms
+```
+
+### Color Constants
+
+```tsx
+import {
+  PHASE_COLORS,
+  BACKGROUND_GRADIENT_COLORS,
+  CARD_GRADIENT_COLORS,
+  DARK_THEME,
+  LIGHT_THEME
+} from '@rubixscript/react-native-flip-clock';
+
+// Phase colors for work, break, longBreak
+PHASE_COLORS.work;
+PHASE_COLORS.break;
+PHASE_COLORS.longBreak;
+
+// Background gradient colors for each phase
+BACKGROUND_GRADIENT_COLORS.work;
+BACKGROUND_GRADIENT_COLORS.break;
+BACKGROUND_GRADIENT_COLORS.longBreak;
+
+// Card gradient colors
+CARD_GRADIENT_COLORS.work;
+CARD_GRADIENT_COLORS.break;
+CARD_GRADIENT_COLORS.longBreak;
+
+// Complete theme objects
+DARK_THEME;
+LIGHT_THEME;
+```
+
+## TypeScript Types
+
+```tsx
+import type {
+  TimerPhase,
+  Theme,
+  ThemeColors,
+  FlipClockProps,
+  FlipClockModalProps,
+  FlipDigitProps,
+  FormattedTime
+} from '@rubixscript/react-native-flip-clock';
+
+// TimerPhase: 'work' | 'break' | 'longBreak'
+// Theme: 'dark' | 'light'
+// FormattedTime: { hours: number, minutes: number, seconds: number, displayText: string }
+```
 
 ## 🚀 Future Updates
 
