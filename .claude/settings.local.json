@@ -14,7 +14,8 @@
       "Bash(sudo sysctl:*)",
       "Bash(git push:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm publish:*)"
     ],
     "deny": [],
     "ask": []
