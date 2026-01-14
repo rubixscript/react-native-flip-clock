@@ -12,7 +12,7 @@ export default function App() {
   const [selectedPhase, setSelectedPhase] = useState('work');
   const [selectedTheme, setSelectedTheme] = useState('dark');
   const [clockMode, setClockMode] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const intervalRef = useRef(null);
 
   // Countdown timer logic

@@ -22,7 +22,17 @@ export { getThemeColors, getPhaseColorsForTheme } from './utils/themeUtils';
 
 // Export constants
 export { DIMENSIONS, ANIMATION_DURATION } from './constants/dimensions';
-export { PHASE_COLORS, BACKGROUND_GRADIENT_COLORS, CARD_GRADIENT_COLORS, DARK_THEME, LIGHT_THEME } from './constants/colors';
+export {
+  PHASE_COLORS,
+  BACKGROUND_GRADIENT_COLORS,
+  CARD_GRADIENT_COLORS,
+  DARK_THEME,
+  LIGHT_THEME,
+  THEMES,
+} from './constants/colors';
+
+// Export themes
+export { THEMES as THEMES_NEW } from './themes/index';
 
 // Export types
 export type {

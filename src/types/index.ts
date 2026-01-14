@@ -18,7 +18,7 @@ export type Theme = 'dark' | 'light' | 'purple' | 'blue' | 'green' | 'orange' | 
  */
 export interface ThemeColors {
   // Background colors
-  backgroundGradient: readonly [string, string, string];
+  backgroundGradient: readonly (string | number)[];
   cardBackground: string;
 
   // Phase colors (for dark theme)
