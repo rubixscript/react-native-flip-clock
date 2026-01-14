@@ -11,7 +11,7 @@ import FlipDigit from '../FlipDigit';
 import ColonSeparator from '../ColonSeparator';
 
 interface ClockDisplayProps {
-  mode: 'countdown' | 'clock';
+  mode: 'countdown' | 'stopwatch' | 'clock';
   hours: [string, string] | null;
   minutes: [string, string];
   seconds: [string, string];

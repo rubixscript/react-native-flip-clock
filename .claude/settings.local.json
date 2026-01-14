@@ -11,7 +11,8 @@
       "Bash(npm run type-check:*)",
       "Bash(wc:*)",
       "Bash(sudo tee:*)",
-      "Bash(sudo sysctl:*)"
+      "Bash(sudo sysctl:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
