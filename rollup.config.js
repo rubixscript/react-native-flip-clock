@@ -37,7 +37,6 @@ const config = [
       'react',
       'react-native',
       'expo',
-      'expo-av',
       'expo-linear-gradient',
       'expo-screen-orientation',
       '@expo/vector-icons',
