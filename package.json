@@ -34,17 +34,12 @@
   },
   "peerDependencies": {
     "expo": ">=48.0.0",
-    "expo-av": ">=13.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.70.0"
   },
-  "peerDependenciesMeta": {
-    "expo-av": {
-      "optional": true
-    }
-  },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+    "expo-av": ">=13.0.0",
     "expo-linear-gradient": "~15.0.7",
     "expo-screen-orientation": "~9.0.7"
   },
