@@ -4,9 +4,32 @@
 export type TimerPhase = 'work' | 'break' | 'longBreak';
 
 /**
- * Clock mode types - countdown timer or regular clock
+ * Clock mode types - countdown timer, stopwatch, or regular clock
  */
-export type ClockMode = 'countdown' | 'clock';
+export type ClockMode = 'countdown' | 'stopwatch' | 'clock';
+
+/**
+ * Lap entry for stopwatch mode
+ */
+export interface Lap {
+  id: number;
+  lapTime: number;  // Time for this lap in seconds
+  totalTime: number; // Total elapsed time at this lap in seconds
+  timestamp: number; // When the lap was recorded
+}
+
+/**
+ * Session record for time tracking
+ */
+export interface TimeSession {
+  id: string;
+  type: 'countdown' | 'stopwatch';
+  duration: number; // Duration in seconds
+  phase?: TimerPhase;
+  laps?: Lap[];
+  startTime: number;
+  endTime: number;
+}
 
 /**
  * Theme types for FlipClock component
@@ -45,22 +68,26 @@ export interface ThemeColors {
  * Props for FlipClock component
  */
 export interface FlipClockProps {
-  /** Clock mode - countdown timer or regular clock (default: 'countdown') */
+  /** Clock mode - countdown timer, stopwatch, or regular clock (default: 'countdown') */
   mode?: ClockMode;
-  /** Current time in seconds (only for countdown mode) */
+  /** Current time in seconds (for countdown and stopwatch modes) */
   time?: number;
-  /** Whether the timer is currently running (only for countdown mode) */
+  /** Whether the timer is currently running (for countdown and stopwatch modes) */
   isRunning?: boolean;
-  /** Whether the timer is paused (only for countdown mode) */
+  /** Whether the timer is paused (for countdown and stopwatch modes) */
   isPaused?: boolean;
-  /** Callback when timer starts (only for countdown mode) */
+  /** Callback when timer starts (for countdown and stopwatch modes) */
   onStart?: () => void;
-  /** Callback when timer is paused (only for countdown mode) */
+  /** Callback when timer is paused (for countdown and stopwatch modes) */
   onPause?: () => void;
-  /** Callback when timer resumes from pause (only for countdown mode) */
+  /** Callback when timer resumes from pause (for countdown and stopwatch modes) */
   onResume?: () => void;
-  /** Callback when timer stops (only for countdown mode) */
+  /** Callback when timer stops (for countdown and stopwatch modes) */
   onStop?: () => void;
+  /** Callback when lap button is pressed (only for stopwatch mode) */
+  onLap?: () => void;
+  /** Current laps for stopwatch mode */
+  laps?: Lap[];
   /** Callback when component closes */
   onClose: () => void;
   /** Current timer phase (only for countdown mode) */
@@ -79,22 +106,26 @@ export interface FlipClockModalProps {
   visible: boolean;
   /** Callback when modal closes */
   onClose: () => void;
-  /** Clock mode - countdown timer or regular clock (default: 'countdown') */
+  /** Clock mode - countdown timer, stopwatch, or regular clock (default: 'countdown') */
   mode?: ClockMode;
-  /** Current time in seconds (only for countdown mode) */
+  /** Current time in seconds (for countdown and stopwatch modes) */
   time?: number;
-  /** Whether the timer is currently running (only for countdown mode) */
+  /** Whether the timer is currently running (for countdown and stopwatch modes) */
   isRunning?: boolean;
-  /** Whether the timer is paused (only for countdown mode) */
+  /** Whether the timer is paused (for countdown and stopwatch modes) */
   isPaused?: boolean;
-  /** Callback when timer starts (only for countdown mode) */
+  /** Callback when timer starts (for countdown and stopwatch modes) */
   onStart?: () => void;
-  /** Callback when timer is paused (only for countdown mode) */
+  /** Callback when timer is paused (for countdown and stopwatch modes) */
   onPause?: () => void;
-  /** Callback when timer resumes from pause (only for countdown mode) */
+  /** Callback when timer resumes from pause (for countdown and stopwatch modes) */
   onResume?: () => void;
-  /** Callback when timer stops (only for countdown mode) */
+  /** Callback when timer stops (for countdown and stopwatch modes) */
   onStop?: () => void;
+  /** Callback when lap button is pressed (only for stopwatch mode) */
+  onLap?: () => void;
+  /** Current laps for stopwatch mode */
+  laps?: Lap[];
   /** Current timer phase (only for countdown mode) */
   phase?: TimerPhase;
   /** Theme mode (default: 'dark') */

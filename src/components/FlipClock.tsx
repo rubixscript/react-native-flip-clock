@@ -24,6 +24,8 @@ const FlipClock: React.FC<FlipClockProps> = ({
   onPause,
   onResume,
   onStop,
+  onLap,
+  laps = [],
   onClose,
   phase = 'work',
   theme = 'dark',
@@ -107,7 +109,9 @@ const FlipClock: React.FC<FlipClockProps> = ({
   }, [phase, theme, mode]);
 
   const phaseLabel = useMemo(() => {
-    return mode === 'clock' ? 'CLOCK' : getPhaseLabel(phase);
+    if (mode === 'clock') return 'CLOCK';
+    if (mode === 'stopwatch') return 'STOPWATCH';
+    return getPhaseLabel(phase);
   }, [phase, mode]);
 
   return (
@@ -139,9 +143,10 @@ const FlipClock: React.FC<FlipClockProps> = ({
         />
       </View>
 
-      {/* Control buttons - only show in countdown mode */}
-      {mode === 'countdown' && (
+      {/* Control buttons - show in countdown and stopwatch modes */}
+      {mode !== 'clock' && (
         <ClockControls
+          mode={mode}
           isRunning={isRunning}
           isPaused={isPaused}
           phaseColor={phaseColors.primary}
@@ -152,6 +157,8 @@ const FlipClock: React.FC<FlipClockProps> = ({
           onResume={onResume}
           onStop={onStop}
           onSkip={onStop}
+          onLap={onLap}
+          laps={laps}
         />
       )}
     </View>

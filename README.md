@@ -6,13 +6,15 @@ A premium aesthetic flip clock timer component with smooth animations for React 
 
 - 🎯 Beautiful flip animation effects
 - 🌅 Automatic landscape orientation support
-- 🎨 Light & dark theme support
+- ⏱️ **Stopwatch mode with lap tracking**
+- 🎨 10 beautiful themes (dark, light, purple, blue, green, orange, pink, glass, modern, minimal)
 - 🎭 Phase-based color theming
 - ⏱️ Responsive design
 - 📱 Full-screen modal support
 - 🎪 Smooth animations and gradients
 - 🧩 Modular architecture
 - 🎛️ Highly customizable
+- 🪝 Built-in time tracking hook
 
 ## Installation
 
@@ -28,99 +30,247 @@ Make sure you have these installed in your project:
 
 ```bash
 npm install expo-linear-gradient expo-screen-orientation @expo/vector-icons
+# Optional (for session persistence)
+npm install @react-native-async-storage/async-storage
 ```
 
-## Usage
+## Quick Start
+
+### Countdown Timer Mode
 
 ```tsx
 import React, { useState } from 'react';
-import { FlipClock, FlipClockModal, TimerPhase } from '@rubixscript/react-native-flip-clock';
+import { FlipClockModal, TimerPhase } from '@rubixscript/react-native-flip-clock';
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const [time, setTime] = useState(1500); // 25 minutes
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [phase, setPhase] = useState<TimerPhase>('work');
-
-  const handleStart = () => {
-    setIsRunning(true);
-    setIsPaused(false);
-  };
-
-  const handlePause = () => {
-    setIsPaused(true);
-  };
-
-  const handleResume = () => {
-    setIsPaused(false);
-  };
-
-  const handleStop = () => {
-    setIsRunning(false);
-    setIsPaused(false);
-    setTime(1500);
-  };
-
-  const handleClose = () => {
-    setShowModal(false);
-  };
 
   return (
-    <View>
-      <Button
-        title="Show Flip Clock"
-        onPress={() => setShowModal(true)}
-      />
-
-      <FlipClockModal
-        visible={showModal}
-        onClose={handleClose}
-        time={time}
-        isRunning={isRunning}
-        isPaused={isPaused}
-        onStart={handleStart}
-        onPause={handlePause}
-        onResume={handleResume}
-        onStop={handleStop}
-        phase={phase}
-        theme="dark" // or "light"
-      />
-    </View>
+    <FlipClockModal
+      visible={showModal}
+      onClose={() => setShowModal(false)}
+      mode="countdown"
+      time={time}
+      isRunning={isRunning}
+      isPaused={isPaused}
+      onStart={() => { setIsRunning(true); setIsPaused(false); }}
+      onPause={() => setIsPaused(true)}
+      onResume={() => setIsPaused(false)}
+      onStop={() => { setIsRunning(false); setIsPaused(false); setTime(1500); }}
+      phase="work"
+      theme="dark"
+      soundEnabled={true}
+    />
   );
 };
 ```
 
-## Theme Support
+### Stopwatch Mode
 
-The flip clock supports both light and dark themes:
-
-### Dark Theme (Default)
 ```tsx
-<FlipClock
-  {...props}
-  theme="dark" // optional, defaults to dark
+import React, { useState } from 'react';
+import { FlipClockModal, useTimeTracker } from '@rubixscript/react-native-flip-clock';
+
+const App = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  // Built-in hook for stopwatch functionality
+  const tracker = useTimeTracker({
+    onSessionComplete: (session) => {
+      console.log('Session completed:', session);
+    },
+    maxLaps: 10,
+  });
+
+  return (
+    <FlipClockModal
+      visible={showModal}
+      onClose={() => setShowModal(false)}
+      mode="stopwatch"
+      time={tracker.elapsedSeconds}
+      isRunning={tracker.isRunning}
+      isPaused={tracker.isPaused}
+      onStart={tracker.start}
+      onPause={tracker.pause}
+      onResume={tracker.resume}
+      onStop={tracker.stop}
+      onLap={tracker.recordLap}
+      laps={tracker.laps}
+      theme="dark"
+      soundEnabled={true}
+    />
+  );
+};
+```
+
+### Clock Mode
+
+```tsx
+<FlipClockModal
+  visible={showModal}
+  onClose={() => setShowModal(false)}
+  mode="clock"
+  theme="dark"
 />
 ```
 
-### Light Theme
+## Clock Modes
+
+The flip clock supports three modes:
+
+| Mode | Description | Display Format |
+|------|-------------|----------------|
+| `'countdown'` | Timer that counts down | MM:SS |
+| `'stopwatch'` | Timer that counts up with lap support | HH:MM:SS |
+| `'clock'` | Real-time clock display | HH:MM:SS |
+
+## Stopwatch Features
+
+The stopwatch mode includes built-in lap tracking functionality:
+
+### Using the `useTimeTracker` Hook
+
 ```tsx
-<FlipClock
-  {...props}
-  theme="light"
-/>
+import { useTimeTracker, formatStopwatchTime } from '@rubixscript/react-native-flip-clock';
+
+function StopwatchApp() {
+  const tracker = useTimeTracker({
+    onSessionComplete: (session) => {
+      // Handle session completion
+      console.log('Duration:', session.duration);
+      console.log('Laps:', session.laps);
+    },
+    maxLaps: 10,
+    autoSave: true,
+    storageKey: '@myapp_stopwatch_sessions',
+  });
+
+  return (
+    <View>
+      <Text>{formatStopwatchTime(tracker.elapsedSeconds)}</Text>
+      <Text>Status: {tracker.isRunning ? 'Running' : 'Stopped'}</Text>
+
+      <Button title="Start" onPress={tracker.start} />
+      <Button title="Pause" onPress={tracker.pause} />
+      <Button title="Resume" onPress={tracker.resume} />
+      <Button title="Stop" onPress={tracker.stop} />
+      <Button title="Lap" onPress={tracker.recordLap} />
+
+      {/* Display laps */}
+      {tracker.laps.map((lap, index) => (
+        <Text key={lap.id}>
+          Lap {tracker.laps.length - index}: +{formatStopwatchTime(lap.lapTime)}
+          {' '}({formatStopwatchTime(lap.totalTime)})
+        </Text>
+      ))}
+    </View>
+  );
+}
+```
+
+### `useTimeTracker` Return Values
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `elapsedSeconds` | `number` | Current elapsed time in seconds |
+| `isRunning` | `boolean` | Whether the tracker is running |
+| `isPaused` | `boolean` | Whether the tracker is paused |
+| `laps` | `Lap[]` | Array of recorded laps |
+| `start` | `() => void` | Start the tracker |
+| `pause` | `() => void` | Pause the tracker |
+| `resume` | `() => void` | Resume from pause |
+| `stop` | `() => void` | Stop and complete the session |
+| `reset` | `() => void` | Reset to initial state |
+| `recordLap` | `() => void` | Record a lap time |
+| `clearLaps` | `() => void` | Clear all laps |
+| `getFormattedTime` | `() => string` | Get formatted time string |
+
+### `useTimeTracker` Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `onSessionComplete` | `(session: TimeSession) => void` | `undefined` | Callback when session completes |
+| `maxLaps` | `number` | `10` | Maximum number of laps to keep |
+| `autoSave` | `boolean` | `false` | Auto-save to AsyncStorage |
+| `storageKey` | `string` | `'@fliplib_sessions'` | Storage key for sessions |
+
+### Lap Data Structure
+
+```tsx
+interface Lap {
+  id: number;          // Unique lap ID
+  lapTime: number;     // Time for this lap (seconds)
+  totalTime: number;   // Total elapsed time (seconds)
+  timestamp: number;   // When the lap was recorded
+}
+```
+
+### Session Data Structure
+
+```tsx
+interface TimeSession {
+  id: string;          // Unique session ID
+  type: 'countdown' | 'stopwatch';
+  duration: number;    // Duration in seconds
+  phase?: TimerPhase;  // Phase for countdown sessions
+  laps?: Lap[];        // Recorded laps
+  startTime: number;   // Session start timestamp
+  endTime: number;     // Session end timestamp
+}
+```
+
+### Session Persistence (Optional)
+
+```tsx
+import {
+  loadSessions,
+  clearSessions,
+  type TimeSession
+} from '@rubixscript/react-native-flip-clock';
+
+// Load saved sessions
+async function loadHistory() {
+  const sessions = await loadSessions('@myapp_sessions');
+  console.log('Total sessions:', sessions.length);
+  // Process sessions...
+}
+
+// Clear all sessions
+async function clearHistory() {
+  await clearSessions('@myapp_sessions');
+}
+```
+
+## Theme Support
+
+The flip clock supports 10 beautiful themes:
+
+```tsx
+<FlipClock theme="dark" />      // Default
+<FlipClock theme="light" />
+<FlipClock theme="purple" />
+<FlipClock theme="blue" />
+<FlipClock theme="green" />
+<FlipClock theme="orange" />
+<FlipClock theme="pink" />
+<FlipClock theme="glass" />
+<FlipClock theme="modern" />
+<FlipClock theme="minimal" />
 ```
 
 ### Theme Customization
+
 ```tsx
-import { DARK_THEME, LIGHT_THEME, getThemeColors } from '@rubixscript/react-native-flip-clock';
+import { getThemeColors, getPhaseColorsForTheme } from '@rubixscript/react-native-flip-clock';
 
-// Use built-in themes
-const darkColors = getThemeColors('dark');
-const lightColors = getThemeColors('light');
+// Get theme colors
+const colors = getThemeColors('dark');
 
-// Components respond to theme automatically
-<FlipClock theme="light" />
+// Get phase colors for a specific theme
+const workColors = getPhaseColorsForTheme('work', 'dark');
 ```
 
 ## Modular Components
@@ -132,11 +282,11 @@ import { FlipDigit, ColonSeparator } from '@rubixscript/react-native-flip-clock'
 
 const CustomClock = () => (
   <View style={{ flexDirection: 'row' }}>
-    <FlipDigit digit="1" prevDigit="0" phaseColor="#FF6B6B" themeColors={themeColors} />
-    <FlipDigit digit="2" prevDigit="1" phaseColor="#FF6B6B" themeColors={themeColors} />
-    <ColonSeparator color="#FF6B6B" />
-    <FlipDigit digit="0" prevDigit="5" phaseColor="#FF6B6B" themeColors={themeColors} />
-    <FlipDigit digit="0" prevDigit="9" phaseColor="#FF6B6B" themeColors={themeColors} />
+    <FlipDigit digit="1" prevDigit="0" phaseColor="#3B82F6" themeColors={themeColors} />
+    <FlipDigit digit="2" prevDigit="1" phaseColor="#3B82F6" themeColors={themeColors} />
+    <ColonSeparator color="#3B82F6" />
+    <FlipDigit digit="0" prevDigit="5" phaseColor="#3B82F6" themeColors={themeColors} />
+    <FlipDigit digit="0" prevDigit="9" phaseColor="#3B82F6" themeColors={themeColors} />
   </View>
 );
 ```
@@ -145,27 +295,31 @@ const CustomClock = () => (
 
 ### FlipClock
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `time` | `number` | Current time in seconds |
-| `isRunning` | `boolean` | Whether the timer is currently running |
-| `isPaused` | `boolean` | Whether the timer is paused |
-| `onStart` | `() => void` | Callback when timer starts |
-| `onPause` | `() => void` | Callback when timer is paused |
-| `onResume` | `() => void` | Callback when timer resumes |
-| `onStop` | `() => void` | Callback when timer stops |
-| `onClose` | `() => void` | Callback when component closes |
-| `phase` | `TimerPhase` | Current timer phase (`'work'`, `'break'`, `'longBreak'`) |
-| `theme` | `Theme` | Theme mode (`'dark'` | `'light'`, defaults to `'dark'`) |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `mode` | `'countdown' \| 'stopwatch' \| 'clock'` | `'countdown'` | Clock mode |
+| `time` | `number` | `0` | Current time in seconds |
+| `isRunning` | `boolean` | `false` | Whether timer is running |
+| `isPaused` | `boolean` | `false` | Whether timer is paused |
+| `onStart` | `() => void` | `undefined` | Callback when timer starts |
+| `onPause` | `() => void` | `undefined` | Callback when timer is paused |
+| `onResume` | `() => void` | `undefined` | Callback when timer resumes |
+| `onStop` | `() => void` | `undefined` | Callback when timer stops |
+| `onLap` | `() => void` | `undefined` | Callback when lap button pressed (stopwatch only) |
+| `laps` | `Lap[]` | `[]` | Current laps (stopwatch only) |
+| `onClose` | `() => void` | **required** | Callback when component closes |
+| `phase` | `TimerPhase` | `'work'` | Timer phase for countdown mode |
+| `theme` | `Theme` | `'dark'` | Theme mode |
+| `soundEnabled` | `boolean` | `false` | Enable flip sound |
 
 ### FlipClockModal
 
 Includes all FlipClock props plus:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `visible` | `boolean` | Whether the modal is visible |
-| `onClose` | `() => void` | Callback when modal closes |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `visible` | `boolean` | **required** | Whether the modal is visible |
+| `onClose` | `() => void` | **required** | Callback when modal closes |
 
 ### FlipDigit
 
@@ -177,7 +331,8 @@ Individual flip digit component for custom implementations.
 | `prevDigit` | `string` | Previous digit value for animation |
 | `phaseColor` | `string` | Color for the current phase |
 | `themeColors` | `ThemeColors` | Theme color object |
-| `size` | `number` | Optional custom size |
+| `compact` | `boolean` | Use smaller size (for 6-digit clock mode) |
+| `soundEnabled` | `boolean` | Enable flip sound |
 
 ### ColonSeparator
 
@@ -190,21 +345,32 @@ Time separator component (:) for clock displays.
 
 ## Timer Phases
 
-- `'work'` - Focus/Focus time (red theme)
-- `'break'` - Short break (cyan theme)
-- `'longBreak'` - Long break (blue theme)
+- `'work'` - Focus/Focus time
+- `'break'` - Short break
+- `'longBreak'` - Long break
 
 ## Utility Functions
 
 ### `formatTime`
 
-Format seconds into hours, minutes, and seconds.
+Format seconds into minutes and seconds (for countdown mode).
 
 ```tsx
 import { formatTime, type FormattedTime } from '@rubixscript/react-native-flip-clock';
 
-const formatted: FormattedTime = formatTime(3665);
-// Returns: { hours: 1, minutes: 1, seconds: 5, displayText: "01:01:05" }
+const formatted: FormattedTime = formatTime(3665, 3600);
+// Returns: { minutes: '01', seconds: '05', prevMinutes: '60', prevSeconds: '00' }
+```
+
+### `formatStopwatchTime`
+
+Format seconds into HH:MM:SS format (for stopwatch mode).
+
+```tsx
+import { formatStopwatchTime } from '@rubixscript/react-native-flip-clock';
+
+const time = formatStopwatchTime(3665);
+// Returns: "01:01:05"
 ```
 
 ### `getPhaseColors`
@@ -225,20 +391,21 @@ Get a human-readable label for a phase.
 ```tsx
 import { getPhaseLabel } from '@rubixscript/react-native-flip-clock';
 
-const label = getPhaseLabel('work'); // Returns: "Focus"
-const label2 = getPhaseLabel('break'); // Returns: "Short Break"
-const label3 = getPhaseLabel('longBreak'); // Returns: "Long Break"
+const label = getPhaseLabel('work');      // Returns: "FOCUS"
+const label2 = getPhaseLabel('break');    // Returns: "BREAK"
+const label3 = getPhaseLabel('longBreak'); // Returns: "LONG BREAK"
 ```
 
 ### `getThemeColors`
 
-Get theme colors for light or dark mode.
+Get theme colors for any of the 10 available themes.
 
 ```tsx
 import { getThemeColors } from '@rubixscript/react-native-flip-clock';
 
 const darkColors = getThemeColors('dark');
 const lightColors = getThemeColors('light');
+// Returns: ThemeColors object with gradients, card colors, etc.
 ```
 
 ### `getPhaseColorsForTheme`
@@ -258,9 +425,9 @@ const workColors = getPhaseColorsForTheme('work', 'dark');
 ```tsx
 import { DIMENSIONS } from '@rubixscript/react-native-flip-clock';
 
-DIMENSIONS.cardWidth;      // Card width
-DIMENSIONS.cardHeight;     // Card height
-DIMENSIONS.cardBorderRadius; // Border radius
+DIMENSIONS.DIGIT_WIDTH;      // Card width
+DIMENSIONS.DIGIT_HEIGHT;     // Card height
+DIMENSIONS.FONT_SIZE;        // Font size
 // ... and more
 ```
 
@@ -269,203 +436,87 @@ DIMENSIONS.cardBorderRadius; // Border radius
 ```tsx
 import { ANIMATION_DURATION } from '@rubixscript/react-native-flip-clock';
 
-ANIMATION_DURATION.flip; // Flip animation duration in ms
-```
-
-### Color Constants
-
-```tsx
-import {
-  PHASE_COLORS,
-  BACKGROUND_GRADIENT_COLORS,
-  CARD_GRADIENT_COLORS,
-  DARK_THEME,
-  LIGHT_THEME
-} from '@rubixscript/react-native-flip-clock';
-
-// Phase colors for work, break, longBreak
-PHASE_COLORS.work;
-PHASE_COLORS.break;
-PHASE_COLORS.longBreak;
-
-// Background gradient colors for each phase
-BACKGROUND_GRADIENT_COLORS.work;
-BACKGROUND_GRADIENT_COLORS.break;
-BACKGROUND_GRADIENT_COLORS.longBreak;
-
-// Card gradient colors
-CARD_GRADIENT_COLORS.work;
-CARD_GRADIENT_COLORS.break;
-CARD_GRADIENT_COLORS.longBreak;
-
-// Complete theme objects
-DARK_THEME;
-LIGHT_THEME;
+ANIMATION_DURATION.flip; // Flip animation duration in ms (300)
 ```
 
 ## TypeScript Types
 
 ```tsx
 import type {
+  // Mode types
+  ClockMode,
   TimerPhase,
   Theme,
-  ThemeColors,
+
+  // Component props
   FlipClockProps,
   FlipClockModalProps,
   FlipDigitProps,
+
+  // Data types
+  Lap,
+  TimeSession,
+  ThemeColors,
+
+  // Hook types
+  UseTimeTrackerOptions,
+  UseTimeTrackerReturn,
+
+  // Utility types
   FormattedTime
 } from '@rubixscript/react-native-flip-clock';
 
+// ClockMode: 'countdown' | 'stopwatch' | 'clock'
 // TimerPhase: 'work' | 'break' | 'longBreak'
-// Theme: 'dark' | 'light'
-// FormattedTime: { hours: number, minutes: number, seconds: number, displayText: string }
+// Theme: 'dark' | 'light' | 'purple' | 'blue' | 'green' | 'orange' | 'pink' | 'glass' | 'modern' | 'minimal'
 ```
 
-## 🚀 Future Updates
+## Examples
 
-We're continuously working to improve the flip clock library. Here's our roadmap of planned features:
+### Simple Countdown Timer
 
-### **Priority 1: Essential Developer Experience**
+```tsx
+import { FlipClock } from '@rubixscript/react-native-flip-clock';
 
-#### **🎨 Comprehensive Customization API**
-- Size scaling options (`scale` prop for 0.5x - 2.0x)
-- Custom digit spacing and layout options
-- Toggleable UI elements (phase indicator, close button, controls)
-- Custom color overrides and theme extensions
-- Advanced styling options
-
-#### **⚡ Animation Configuration**
-- Adjustable flip duration and easing functions
-- Spring physics configuration
-- Animation performance tuning
-- Reduced motion support for accessibility
-
-### **Priority 2: Visual Enhancements**
-
-#### **🎭 Multiple Animation Styles**
-- `'flip'` (current default)
-- `'slide'` - Smooth digit transitions
-- `'fade'` - Crossfade effects
-- `'scale'` - Zoom transitions
-- `'rotate'` - Rotation effects
-
-#### **📊 Additional Display Formats**
-- `'MM:SS'` - 25:00 (current)
-- `'HH:MM:SS'` - 01:25:00
-- `'MM'` - 25
-- `'SS'` - 1500
-- `'fractional'` - 24.5
-
-#### **✨ Visual Effects**
-- Gradient glow effects for phase indicators
-- Smooth color transitions between phases
-- Pulse effects for active states
-- Glassmorphism options for modern aesthetics
-- Custom shadow and blur effects
-
-### **Priority 3: Functionality Improvements**
-
-#### **🔊 Sound Support**
-- Configurable tick sounds
-- Phase change notifications
-- Completion sounds
-- Custom sound file support
-- Mute/vibration options
-
-#### **♿ Accessibility Features**
-- Screen reader compatibility
-- Phase change announcements
-- Time remaining voice notifications
-- High contrast mode
-- Comprehensive ARIA support
-
-#### **📈 State Management Integration**
-- React hooks for easy state management
-- Built-in time tracking utilities
-- Session history and analytics
-- Progress monitoring and insights
-
-### **Priority 4: Platform-Specific Enhancements**
-
-#### **📱 Responsive Design**
-- Auto-adjusting sizes for all screen dimensions
-- Tablet and phone optimizations
-- Adaptive landscape/portrait layouts
-- Dynamic font scaling integration
-- Safe area handling
-
-#### **🔄 Native Platform Features**
-- Haptic feedback on controls
-- System theme detection (auto light/dark)
-- Push notification integration
-- Background timer support
-- Battery optimization
-
-### **Priority 5: Developer Tools**
-
-#### **🛠 Development Utilities**
-- Debug mode with visual overlays
-- FPS monitoring and performance metrics
-- Animation slow-motion for testing
-- Component inspector integration
-- Hot reload optimization
-
-#### **🎨 Theme Builder**
-```typescript
-// Planned theme builder utility
-const customTheme = buildTheme({
-  base: 'light',
-  primaryColor: '#6366f1',
-  accentColor: '#ec4899',
-  borderRadius: 'rounded' | 'sharp' | 'custom',
-  style: 'minimal' | 'detailed' | 'custom',
-});
+<FlipClock
+  mode="countdown"
+  time={1500}
+  phase="work"
+  theme="dark"
+  onClose={() => {}}
+/>
 ```
 
-### **Priority 6: Advanced Components**
+### Stopwatch with Manual Control
 
-#### **⏱️ Timer Presets**
-```typescript
-// Planned preset configurations
-const TIMER_PRESETS = {
-  pomodoro: { work: 25 * 60, break: 5 * 60, longBreak: 15 * 60 },
-  shortBreak: { work: 5 * 60, break: 1 * 60, longBreak: 3 * 60 },
-  deepWork: { work: 52 * 60, break: 17 * 60, longBreak: 30 * 60 },
-  custom: { /* user-defined */ }
-};
+```tsx
+import { FlipClock } from '@rubixscript/react-native-flip-clock';
+
+<FlipClock
+  mode="stopwatch"
+  time={elapsedSeconds}
+  isRunning={isRunning}
+  laps={laps}
+  onStart={handleStart}
+  onPause={handlePause}
+  onStop={handleStop}
+  onLap={handleLap}
+  theme="dark"
+  onClose={() => {}}
+/>
 ```
 
-#### **🎛️ Standalone Controls**
-- Separate control button components
-- Customizable layouts (horizontal/vertical)
-- Minimal and detailed control styles
-- Gesture support and shortcuts
+### Real-time Clock
 
-#### **📊 Analytics & Insights**
-- Usage tracking and statistics
-- Productivity metrics
-- Session analytics
-- Export functionality
+```tsx
+import { FlipClock } from '@rubixscript/react-native-flip-clock';
 
-### **How to Contribute**
-
-We welcome community contributions! Here's how you can help:
-
-1. **Feature Requests** - Open an issue with detailed requirements
-2. **Bug Reports** - Include steps to reproduce and expected behavior
-3. **Pull Requests** - Follow our contribution guidelines
-4. **Documentation** - Help improve examples and guides
-
-### **Timeline Estimate**
-
-- **Next Major Release (v2.0)**: Customization API + Animation Configuration
-- **Q2 2024**: Visual Enhancements + Sound Support
-- **Q3 2024**: Platform Features + Developer Tools
-- **Q4 2024**: Advanced Components + Analytics
-
-*Timeline is subject to change based on community feedback and priorities.*
-
----
+<FlipClock
+  mode="clock"
+  theme="light"
+  onClose={() => {}}
+/>
+```
 
 ## License
 

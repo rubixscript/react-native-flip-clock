@@ -14,6 +14,15 @@ export { default as FlipClockModal } from './components/FlipClockModal';
 export { default as FlipDigit } from './components/FlipDigit';
 export { default as ColonSeparator } from './components/ColonSeparator';
 
+// Export hooks
+export {
+  useTimeTracker,
+  formatStopwatchTime,
+  loadSessions,
+  clearSessions,
+} from './hooks/useTimeTracker';
+export type { UseTimeTrackerOptions, UseTimeTrackerReturn } from './hooks/useTimeTracker';
+
 // Export utilities
 export { getPhaseColors, getPhaseLabel } from './utils/phaseUtils';
 export { formatTime } from './utils/timeUtils';
@@ -37,9 +46,12 @@ export { THEMES as THEMES_NEW } from './themes/index';
 // Export types
 export type {
   TimerPhase,
+  ClockMode,
   Theme,
   ThemeColors,
   FlipClockProps,
   FlipClockModalProps,
-  FlipDigitProps
+  FlipDigitProps,
+  Lap,
+  TimeSession,
 } from './types';

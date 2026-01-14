@@ -1,13 +1,15 @@
 /**
  * @component ClockControls
- * @description Control buttons for countdown mode (reset, play/pause, skip)
+ * @description Control buttons for countdown and stopwatch modes
  */
 
 import React, { memo } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ClockMode, Lap } from '../../types';
 
 interface ClockControlsProps {
+  mode?: ClockMode;
   isRunning: boolean;
   isPaused: boolean;
   phaseColor: string;
@@ -18,9 +20,12 @@ interface ClockControlsProps {
   onResume?: () => void;
   onStop?: () => void;
   onSkip?: () => void;
+  onLap?: () => void;
+  laps?: Lap[];
 }
 
 const ClockControls: React.FC<ClockControlsProps> = memo(({
+  mode = 'countdown',
   isRunning,
   isPaused,
   phaseColor,
@@ -30,28 +35,45 @@ const ClockControls: React.FC<ClockControlsProps> = memo(({
   onPause,
   onResume,
   onStop,
-  onSkip
+  onSkip,
+  onLap,
+  laps = []
 }) => {
   const handlePlayPausePress = () => {
     if (!isRunning || isPaused) {
-      onStart?.();
+      // Start or Resume
+      if (isPaused) {
+        onResume?.();
+      } else {
+        onStart?.();
+      }
     } else {
+      // Pause
       onPause?.();
     }
   };
 
+  // For stopwatch mode, show lap button when running
+  const showLapButton = mode === 'stopwatch' && isRunning && !isPaused;
+
   return (
     <View style={styles.controlsContainer}>
+      {/* Left button - Reset/Stop */}
       <TouchableOpacity
         style={[
           styles.controlButton,
-          { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }
+          { backgroundColor: theme === 'light' || theme === 'minimal' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)' }
         ]}
         onPress={onStop}
       >
-        <MaterialCommunityIcons name="refresh" size={22} color={controlButtonColor} />
+        <MaterialCommunityIcons
+          name={isRunning ? 'stop' : 'refresh'}
+          size={22}
+          color={controlButtonColor}
+        />
       </TouchableOpacity>
 
+      {/* Center button - Play/Pause */}
       <TouchableOpacity
         style={[
           styles.playPauseButton,
@@ -66,15 +88,39 @@ const ClockControls: React.FC<ClockControlsProps> = memo(({
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[
-          styles.controlButton,
-          { backgroundColor: theme === 'light' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.08)' }
-        ]}
-        onPress={onSkip}
-      >
-        <MaterialCommunityIcons name="skip-next" size={22} color={controlButtonColor} />
-      </TouchableOpacity>
+      {/* Right button - Lap (stopwatch) or Skip (countdown) */}
+      {showLapButton ? (
+        <TouchableOpacity
+          style={[
+            styles.controlButton,
+            styles.lapButton,
+            { backgroundColor: 'rgba(139, 92, 246, 0.2)' }
+          ]}
+          onPress={onLap}
+        >
+          <MaterialCommunityIcons name="flag-checkered" size={22} color="#8B5CF6" />
+          {laps.length > 0 && (
+            <View style={styles.lapCountBadge}>
+              <MaterialCommunityIcons name="flag" size={10} color="#FFFFFF" />
+            </View>
+          )}
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[
+            styles.controlButton,
+            { backgroundColor: theme === 'light' || theme === 'minimal' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)' }
+          ]}
+          onPress={onSkip}
+          disabled={mode === 'stopwatch'}
+        >
+          <MaterialCommunityIcons
+            name={mode === 'stopwatch' ? 'flag-outline' : 'skip-next'}
+            size={22}
+            color={mode === 'stopwatch' ? (theme === 'light' || theme === 'minimal' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)') : controlButtonColor}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 });
@@ -91,6 +137,21 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  lapButton: {
+    borderWidth: 1,
+    borderColor: 'rgba(139, 92, 246, 0.3)',
+  },
+  lapCountBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#8B5CF6',
     justifyContent: 'center',
     alignItems: 'center',
   },

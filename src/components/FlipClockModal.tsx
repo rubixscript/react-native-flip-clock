@@ -21,6 +21,8 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
   onPause,
   onResume,
   onStop,
+  onLap,
+  laps = [],
   phase = 'work',
   theme = 'dark',
   soundEnabled = false,
@@ -73,6 +75,8 @@ const FlipClockModal: React.FC<FlipClockModalProps> = ({
         onPause={onPause}
         onResume={onResume}
         onStop={onStop}
+        onLap={onLap}
+        laps={laps}
         onClose={handleClose}
         phase={phase}
         theme={theme}
