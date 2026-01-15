@@ -15,13 +15,15 @@ interface ClockControlsProps {
   phaseColor: string;
   controlButtonColor: string;
   theme: 'light' | 'dark' | 'purple' | 'blue' | 'green' | 'orange' | 'pink' | 'glass' | 'modern' | 'minimal';
-  onStart?: () => void;
-  onPause?: () => void;
-  onResume?: () => void;
-  onStop?: () => void;
+  onStart?: (elapsedSeconds: number) => void;
+  onPause?: (elapsedSeconds: number) => void;
+  onResume?: (elapsedSeconds: number) => void;
+  onStop?: (elapsedSeconds: number) => void;
   onSkip?: () => void;
   onLap?: () => void;
   laps?: Lap[];
+  /** Current elapsed time in seconds */
+  elapsedSeconds?: number;
 }
 
 const ClockControls: React.FC<ClockControlsProps> = memo(({
@@ -37,19 +39,20 @@ const ClockControls: React.FC<ClockControlsProps> = memo(({
   onStop,
   onSkip,
   onLap,
-  laps = []
+  laps = [],
+  elapsedSeconds = 0
 }) => {
   const handlePlayPausePress = () => {
     if (!isRunning || isPaused) {
       // Start or Resume
       if (isPaused) {
-        onResume?.();
+        onResume?.(elapsedSeconds);
       } else {
-        onStart?.();
+        onStart?.(elapsedSeconds);
       }
     } else {
       // Pause
-      onPause?.();
+      onPause?.(elapsedSeconds);
     }
   };
 
@@ -64,7 +67,7 @@ const ClockControls: React.FC<ClockControlsProps> = memo(({
           styles.controlButton,
           { backgroundColor: theme === 'light' || theme === 'minimal' ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.08)' }
         ]}
-        onPress={onStop}
+        onPress={() => onStop?.(elapsedSeconds)}
       >
         <MaterialCommunityIcons
           name={isRunning ? 'stop' : 'refresh'}

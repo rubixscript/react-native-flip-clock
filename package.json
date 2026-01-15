@@ -1,6 +1,6 @@
 {
   "name": "@rubixscript/react-native-flip-clock",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "description": "A premium aesthetic flip clock timer component with smooth animations for React Native",
   "main": "dist/index.js",

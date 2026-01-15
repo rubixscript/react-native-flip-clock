@@ -156,9 +156,10 @@ const FlipClock: React.FC<FlipClockProps> = ({
           onPause={onPause}
           onResume={onResume}
           onStop={onStop}
-          onSkip={onStop}
+          onSkip={() => onStop?.(time)}
           onLap={onLap}
           laps={laps}
+          elapsedSeconds={time}
         />
       )}
     </View>

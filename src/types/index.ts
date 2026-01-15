@@ -76,14 +76,14 @@ export interface FlipClockProps {
   isRunning?: boolean;
   /** Whether the timer is paused (for countdown and stopwatch modes) */
   isPaused?: boolean;
-  /** Callback when timer starts (for countdown and stopwatch modes) */
-  onStart?: () => void;
-  /** Callback when timer is paused (for countdown and stopwatch modes) */
-  onPause?: () => void;
-  /** Callback when timer resumes from pause (for countdown and stopwatch modes) */
-  onResume?: () => void;
-  /** Callback when timer stops (for countdown and stopwatch modes) */
-  onStop?: () => void;
+  /** Callback when timer starts (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onStart?: (elapsedSeconds: number) => void;
+  /** Callback when timer is paused (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onPause?: (elapsedSeconds: number) => void;
+  /** Callback when timer resumes from pause (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onResume?: (elapsedSeconds: number) => void;
+  /** Callback when timer stops (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onStop?: (elapsedSeconds: number) => void;
   /** Callback when lap button is pressed (only for stopwatch mode) */
   onLap?: () => void;
   /** Current laps for stopwatch mode */
@@ -114,14 +114,14 @@ export interface FlipClockModalProps {
   isRunning?: boolean;
   /** Whether the timer is paused (for countdown and stopwatch modes) */
   isPaused?: boolean;
-  /** Callback when timer starts (for countdown and stopwatch modes) */
-  onStart?: () => void;
-  /** Callback when timer is paused (for countdown and stopwatch modes) */
-  onPause?: () => void;
-  /** Callback when timer resumes from pause (for countdown and stopwatch modes) */
-  onResume?: () => void;
-  /** Callback when timer stops (for countdown and stopwatch modes) */
-  onStop?: () => void;
+  /** Callback when timer starts (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onStart?: (elapsedSeconds: number) => void;
+  /** Callback when timer is paused (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onPause?: (elapsedSeconds: number) => void;
+  /** Callback when timer resumes from pause (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onResume?: (elapsedSeconds: number) => void;
+  /** Callback when timer stops (for countdown and stopwatch modes) - receives elapsed time in seconds */
+  onStop?: (elapsedSeconds: number) => void;
   /** Callback when lap button is pressed (only for stopwatch mode) */
   onLap?: () => void;
   /** Current laps for stopwatch mode */
