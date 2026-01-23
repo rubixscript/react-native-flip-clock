@@ -8,6 +8,7 @@
   "types": "dist/index.d.ts",
   "source": "src/index.ts",
   "scripts": {
+    "start": "npm run start --prefix example-app",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "jest",
