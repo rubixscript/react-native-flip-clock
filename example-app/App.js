@@ -49,7 +49,7 @@ export default function App() {
   const [stopwatchTime, setStopwatchTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   // Stopwatch laps
   const [laps, setLaps] = useState([]);
